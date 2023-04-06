@@ -1,0 +1,22 @@
+version: '3.8'
+services:  
+  django_app:
+    build:
+      context: .
+      target: production
+    restart: always
+    command: bash -c "python manage.py migrate && python manage.py makemigrations  && python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - app_ENV=production
+      - ENGINE=django.db.backends.postgresql
+      - NAME=e6_commerce
+      - USER=postgres
+      - PASSWORD=246800#
+      - HOST=databse
+      - PORT=5432
+   
+    ports:
+      - '3030:8000'
+    depends_on:
+      - database
+      - redis

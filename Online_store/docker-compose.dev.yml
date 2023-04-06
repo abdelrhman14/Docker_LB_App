@@ -1,0 +1,46 @@
+version: '3.8'
+services:
+  django_app:
+    build:
+      context: .
+    #target: development
+    #image: abdelrahman1413/online_store_django
+    restart: always
+    command: bash -c "python manage.py migrate && python manage.py makemigrations  && python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - app_ENV=development
+      - ENGINE=django.db.backends.postgresql
+      - NAME=e6_commerce
+      - USER=postgres
+      - PASSWORD=246800#
+      - HOST=databse
+      - PORT=5432
+    # Hot Reload (Mounting)
+    volumes:
+      - .:/diango_app:ro
+   # ports:
+   #   - '4040:8000'
+    depends_on:
+      - database
+      - redis
+  web:
+    image: nginx
+    ports:
+      - "2000:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - django_app
+    restart : always
+
+  #watchtower:
+  #  image: containrrr/watchtower
+  #  volumes:
+  #    - /var/run/docker.sock:/var/run/docker.sock
+  #  environment:
+  #    - WATCHTOWER_POLL_INTERVAL=40
+  #    - WATCHTOWER_TRACE=True
+  #    - REPO_USER=abdelrahman1413
+  #    - REPO_PASS=abdo246800#
+  #  depends_on:
+  #    - django_app
